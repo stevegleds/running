@@ -47,22 +47,29 @@ def visualize_races(data_file):
 
     #  use 'counter' to count the races
     dates = []
-    # counter = Counter(item['Date'] for item in data_file) #  list comprehension: pyhonic loop construction
+    # counter = Counter(item['Date'] for item in data_file) #  list comprehension: pythonic loop construction
     runner_counter = Counter(item['Name'] for item in data_file)  # stores the number of races per runner
     print("runner counter is: ", runner_counter)
     runner_list = [runner for runner in sorted(runner_counter)]  # stores list of runners full names
     runner_list.pop(0)  # first value is the null value
     print("Runner list is :", runner_list)
     runner_data = [runner_counter[runner] for runner in runner_counter]  # Creates list of data points
-    runner_data.pop(0)  # first value is all the null rows
+    runner_data.pop(0)  # first value is all the null rows so we can remove it
     runner_tuple = tuple(sorted(runner_list))  # This will be the label. The results may be in a different order
-    # TODO edit x-axis label to reflect correct order - not alphabetical
-    print("runner_data is : ", runner_data)
-    print("runners :", runner_tuple)
-    print("runner_list", runner_list)
+    for runner in runner_tuple : print("next runner is : ", runner, "with ", runner_counter[runner], "runs")
+    #  TODO edit x-axis label to reflect correct order - not alphabetical
+    #  print("runner_data is : ", runner_data)
+    #  print("runners :", runner_tuple)
+    #  print("runner_list", runner_list)
+
+    # Give more room so x-axis labels aren't cut off
+    plt.subplots_adjust(bottom=0.6)  # subplots can be used to adjust spacing around the graph
+
     #  separate the x-axis (runners) from the counter variable for the y-axis - races per runner
 
     #  assign y-axis (counter) data to a matplotlib plot instance
+    #  runner_data = runner_data.sort
+    print("************ Runnder Data ************ ", runner_data)
     plt.plot(runner_data)
 
     #  create the number of ticks needed and assign labels
@@ -81,12 +88,14 @@ def visualize_type(new_data):
     """
 
     # grab parsed data
-    # new_data is passed as parameter until I work out how to parse(MY_FILR, ",") from here
+    # new_data is passed as parameter until I work out how to parse(MY_FILE, ",") from here
 
     # create counter to count category entries
     counter = Counter(item['Category'] for item in new_data)
     print(counter)
 
+    #  Add total distance run
+    print("first item in data is : ", new_data[0])
     # set the labels based on keys, order doesn't matter so can just use counter.keys()
     labels = tuple(counter.keys())
 
@@ -117,17 +126,21 @@ def visualize_type(new_data):
 
     return
 
+def total_distance(new_data):
+    for runner in new_data:
+        if runner['Miles'] != "" :
+            print("Runner", runner['Name'], "ran", runner['Miles'], "miles")
+
 def main():
     # Call our parse function with required file an delimiter
     new_data, race_count = parse(RUN_FILE, ',')
-    print("this is our data", new_data)
     print("There were this number of races: ", race_count)
-    print(new_data[0].keys())
+    print("The keys in the data are:", new_data[0].keys())
     #  for dict_item in new_data:
         #  print(type(dict_item["Name"]))
         #  print(dict_item["Date"])
     visualize_races(new_data)
     visualize_type(new_data)
-
+    total_distance(new_data)
 if __name__ == "__main__":
     main()
