@@ -3,6 +3,7 @@ __author__ = 'Steve'
 import matplotlib.pyplot as plt
 import numpy as np
 import csv
+import tkinter as tk
 from collections import Counter
 
 # Working through https://automatetheboringstuff.com/chapter12/#calibre_link-64
@@ -28,16 +29,16 @@ def parse(raw_file, delimiter):
 
     # build data structure to return parsed data
     parsed_data = []  # this will store every row of data
-    racer_count = 0
+    #  racer_count = 0
     fields = csv_data.__next__()  # this will be the column headers; we can use .next() because csv_data is an iterator
     for row in csv_data:
         parsed_data.append(dict(zip(fields, row)))  # Creates a new dict item for each row with col header as key
-        racer_count += 1  # This is number of racers not races
+        #  racer_count += 1  # This is number of racer not races
 
     # close csv file
     opened_file.close()
 
-    return parsed_data, racer_count - 1
+    return parsed_data
 
 
 def visualize_races(data_file):
@@ -56,7 +57,7 @@ def visualize_races(data_file):
     runner_data = [runner_counter[runner] for runner in runner_counter]  # Creates list of data points
     runner_data.pop(0)  # first value is all the null rows so we can remove it
     runner_tuple = tuple(sorted(runner_list))  # This will be the label. The results may be in a different order
-    for runner in runner_tuple : print("next runner is : ", runner, "with ", runner_counter[runner], "runs")
+    #  for runner in runner_tuple : print("next runner is : ", runner, "with ", runner_counter[runner], "runs")
     #  TODO edit x-axis label to reflect correct order - not alphabetical
     #  print("runner_data is : ", runner_data)
     #  print("runners :", runner_tuple)
@@ -69,7 +70,7 @@ def visualize_races(data_file):
 
     #  assign y-axis (counter) data to a matplotlib plot instance
     #  runner_data = runner_data.sort
-    print("************ Runnder Data ************ ", runner_data)
+    print("************ Runner Data ************ ", runner_data)
     plt.plot(runner_data)
 
     #  create the number of ticks needed and assign labels
@@ -126,21 +127,44 @@ def visualize_type(new_data):
 
     return
 
-def total_distance(new_data):
-    for runner in new_data:
-        if runner['Miles'] != "" :
-            print("Runner", runner['Name'], "ran", runner['Miles'], "miles")
+def get_distances(new_data):
+    total_distance = 0
+    championship_distance = 0
+    for race in new_data:
+        if race['Miles'] != "" :
+            print("Runner", race['Name'], "ran", race['Miles'], "miles")
+            total_distance += float(race['Miles'])
+            if race['CC?'] == 'S2015' : championship_distance += float(race['Miles'])
+    return total_distance, championship_distance
+
+def present_race_information(total_miles, championship_miles):
+    # Tkinter testing
+    top = tk.Tk()
+    F = tk.Frame(top)
+    dir(top)
+    F.pack()
+    total_miles_report = 'All Miles Total: ' + str(int(total_miles + 0.5))
+    championship_miles_report = 'Championship Miles Total: ' + str(int(championship_miles + 0.5))
+    lFunMiles = tk.Label(F, text=total_miles_report)
+    lFunMiles.pack()
+    lChampionshipMiles = tk.Label(F, text=championship_miles_report)
+    lChampionshipMiles.pack()
+    top.mainloop()
+
 
 def main():
     # Call our parse function with required file an delimiter
-    new_data, race_count = parse(RUN_FILE, ',')
-    print("There were this number of races: ", race_count)
+    new_data = parse(RUN_FILE, ',')
+    #  print("There were this number of races: ", race_count)
     print("The keys in the data are:", new_data[0].keys())
     #  for dict_item in new_data:
         #  print(type(dict_item["Name"]))
         #  print(dict_item["Date"])
-    visualize_races(new_data)
-    visualize_type(new_data)
-    total_distance(new_data)
+    #  visualize_races(new_data)
+    #  visualize_type(new_data)
+    total_distance, championship_distance = get_distances(new_data)
+    print('Total distance run : ', total_distance, 'of which ', championship_distance, 'miles were in the summer championship')
+    present_race_information(total_distance, championship_distance)
+
 if __name__ == "__main__":
     main()
