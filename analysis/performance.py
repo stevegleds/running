@@ -135,7 +135,18 @@ def get_distances(new_data):
             print("Runner", race['Name'], "ran", race['Miles'], "miles")
             total_distance += float(race['Miles'])
             if race['CC?'] == 'S2015' : championship_distance += float(race['Miles'])
+
     return total_distance, championship_distance
+
+def get_runners_distances(new_data):
+    runners = {'total' : 0}
+    print("finding runners")
+    for race in new_data:
+        if runners.get(race['Name'], "Not a runner") != "Not a runner":
+            pass
+        else:
+            runners[race['Name']] = 0
+    return runners
 
 def present_race_information(total_miles, championship_miles):
     # Tkinter testing
@@ -155,6 +166,7 @@ def present_race_information(total_miles, championship_miles):
 def main():
     # Call our parse function with required file an delimiter
     new_data = parse(RUN_FILE, ',')
+    print("Runners distances are:", get_runners_distances(new_data))
     #  print("There were this number of races: ", race_count)
     print("The keys in the data are:", new_data[0].keys())
     #  for dict_item in new_data:
