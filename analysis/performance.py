@@ -132,6 +132,14 @@ def visualize_type(new_data):
 
     return
 
+def get_runners_list(new_data): 
+    runner_counter = Counter(item['Name'] for item in new_data)  # stores the number of races per runner
+    print("runner counter is: ", runner_counter)
+    runners_list = [runner for runner in sorted(runner_counter)]  # stores list of runners full names
+    runners_list.pop(0)  # first value is the null value
+    print("Runner list is :", runners_list)
+    return runners_list
+
 def get_distances(new_data):
     total_distance = 0
     championship_distance = 0
@@ -143,15 +151,22 @@ def get_distances(new_data):
 
     return total_distance, championship_distance
 
-def get_runners_distances(new_data): #TODO this is not working
-    runners = {'total' : 0}
-    print("finding runners")
+def get_runners(new_data): # go through the data file to get a list of runners
+    runner_counter = Counter(item['Name'] for item in data_file)  # stores the number of races per runner
+    print("runner counter is: ", runner_counter)
+    runner_list = [runner for runner in sorted(runner_counter)]  # stores list of runners full names
+    runner_list.pop(0)  # first value is the null value
+    print("Runner list is :", runner_list)
+    return(runner_list)
+
+
+def get_runners_distances(new_data, runners_list): #TODO this is not working
+    runners_distances = []
+    runners_distances.append(dict(runners_list)) #ERROR trying to create a dictionary where all values are 0
     for race in new_data:
-        if runners.get(race['Name'], "Not a runner") != "Not a runner": #TODO not sure what this is doing
-            pass
-        else:
-            runners[race['Name']] = 0
-    return runners
+        runners_distances['Name'] += race['Distance']
+        print(runners_distances)
+    return runners_distances
 
 def present_race_information(total_miles, championship_miles):
     # Tkinter testing
@@ -171,7 +186,10 @@ def present_race_information(total_miles, championship_miles):
 def main():
     # Call our parse function with required file an delimiter
     new_data = parse(RUN_FILE, ',')
-    print("Runners distances are:", get_runners_distances(new_data))
+    runners_list = get_runners_list(new_data)
+    print("Runners are: ", runners_list)
+    runners_distances = get_runners_distances(new_data, runners_list)
+    print("Runners distances are:", runners_distances)
     #  print("There were this number of races: ", race_count)
     print("The keys in the data are:", new_data[0].keys())
     #  for dict_item in new_data:
