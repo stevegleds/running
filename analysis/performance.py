@@ -1,4 +1,4 @@
-__author__ = 'Steve'
+﻿__author__ = 'Steve'
 # testing
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,8 +33,13 @@ def parse(raw_file, delimiter):
     fields = csv_data.__next__()  # this will be the column headers; we can use .next() because csv_data is an iterator
     for row in csv_data:
         parsed_data.append(dict(zip(fields, row)))  # Creates a new dict item for each row with col header as key
-        #  racer_count += 1  # This is number of racer not races
-
+        #  racer_count += 1  # This is number of racers not races
+    # count number of races
+    race_counter = Counter(item['Race'] for item in parsed_data)  # stores the number of races
+    print("number of races is: ", len(race_counter))
+    print("the races are: ")
+    for k, v in race_counter.items():
+        print(k, "-->", v)
     # close csv file
     opened_file.close()
 
@@ -132,17 +137,17 @@ def get_distances(new_data):
     championship_distance = 0
     for race in new_data:
         if race['Miles'] != "" :
-            print("Runner", race['Name'], "ran", race['Miles'], "miles")
+            # print("Runner", race['Name'], "ran", race['Miles'], "miles")
             total_distance += float(race['Miles'])
-            if race['CC?'] == 'S2015' : championship_distance += float(race['Miles'])
+            if race['CC'] == 'S2015' : championship_distance += float(race['Miles'])
 
     return total_distance, championship_distance
 
-def get_runners_distances(new_data):
+def get_runners_distances(new_data): #TODO this is not working
     runners = {'total' : 0}
     print("finding runners")
     for race in new_data:
-        if runners.get(race['Name'], "Not a runner") != "Not a runner":
+        if runners.get(race['Name'], "Not a runner") != "Not a runner": #TODO not sure what this is doing
             pass
         else:
             runners[race['Name']] = 0
