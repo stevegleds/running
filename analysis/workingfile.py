@@ -1,4 +1,4 @@
-__author__ = 'Steve'
+﻿__author__ = 'Steve'
 # testing
 import matplotlib.pyplot as plt
 import numpy as np
@@ -8,7 +8,7 @@ from performance import parse
 RUN_FILE = 'pythonrunning.csv'
 
 def main():
-    # Call our parse function with required file an delimiter
+    # Call our parse function with required file and delimiter
     new_data, race_count = parse(RUN_FILE, ',')
     print("this is our data", new_data)
     print("There were this number of races: ", race_count)

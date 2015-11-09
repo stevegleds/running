@@ -1,4 +1,4 @@
-__author__ = 'Steve'
+﻿__author__ = 'Steve'
 # testing
 import matplotlib.pyplot as plt
 import numpy as np
@@ -33,8 +33,13 @@ def parse(raw_file, delimiter):
     fields = csv_data.__next__()  # this will be the column headers; we can use .next() because csv_data is an iterator
     for row in csv_data:
         parsed_data.append(dict(zip(fields, row)))  # Creates a new dict item for each row with col header as key
-        #  racer_count += 1  # This is number of racer not races
-
+        #  racer_count += 1  # This is number of racers not races
+    # count number of races
+    race_counter = Counter(item['Race'] for item in parsed_data)  # stores the number of races
+    print("number of races is: ", len(race_counter))
+    print("the races are: ")
+    for k, v in race_counter.items():
+        print(k, "-->", v)
     # close csv file
     opened_file.close()
 
@@ -127,26 +132,49 @@ def visualize_type(new_data):
 
     return
 
+def get_runners_list(new_data): 
+    runner_counter = Counter(item['Name'] for item in new_data)  # stores the number of races per runner
+    print("runner counter is: ", runner_counter)
+    runners_list = [runner for runner in sorted(runner_counter)]  # stores list of runners full names
+    runners_list.pop(0)  # first value is the null value
+    print("Runner list is :", runners_list)
+    return runners_list
+
 def get_distances(new_data):
     total_distance = 0
     championship_distance = 0
     for race in new_data:
         if race['Miles'] != "" :
-            print("Runner", race['Name'], "ran", race['Miles'], "miles")
+            # print("Runner", race['Name'], "ran", race['Miles'], "miles")
             total_distance += float(race['Miles'])
-            if race['CC?'] == 'S2015' : championship_distance += float(race['Miles'])
+            if race['CC'] == 'S2015' : championship_distance += float(race['Miles'])
 
     return total_distance, championship_distance
 
-def get_runners_distances(new_data):
-    runners = {'total' : 0}
-    print("finding runners")
+def get_runners(new_data): # go through the data file to get a list of runners
+    runner_counter = Counter(item['Name'] for item in data_file)  # stores the number of races per runner
+    print("runner counter is: ", runner_counter)
+    runners_list = [runner for runner in sorted(runner_counter)]  # stores list of runners full names
+    runners_list.pop(0)  # first value is the null value
+    print("Runner list is :", runners_list)
+    return(runners_list)
+
+
+def get_runners_distances(new_data, runners_list): #TODO this is not working
+    runners_distances = {} # Dictionary to store cumulative distances
+    for runner in runners_list :
+        runners_distances[runner] = 0 # set to 0 ready to add race distances
+    print('runners distance dict is: ', runners_distances)
     for race in new_data:
-        if runners.get(race['Name'], "Not a runner") != "Not a runner":
-            pass
-        else:
-            runners[race['Name']] = 0
-    return runners
+        print('name is: ', race['Name'], 'distance is : ', race['Miles'])
+        try:
+            runners_distances[race['Name']] += float(race['Miles'])
+            print(race['Name'], ' has raced ', runners_distances[race['Name']], ' at the end of the ', race['Race'], 'race') # TODO need to use formats here
+            # Error Need to trap last race
+        except:
+            pass # we have reached the end of the races . TODO trap this better we are also storing null values. Look at csv file.
+        print(race['Race'])
+    return runners_distances
 
 def present_race_information(total_miles, championship_miles):
     # Tkinter testing
@@ -166,9 +194,12 @@ def present_race_information(total_miles, championship_miles):
 def main():
     # Call our parse function with required file an delimiter
     new_data = parse(RUN_FILE, ',')
-    print("Runners distances are:", get_runners_distances(new_data))
-    #  print("There were this number of races: ", race_count)
     print("The keys in the data are:", new_data[0].keys())
+    runners_list = get_runners_list(new_data)
+    print("Runners are: ", runners_list)
+    runners_distances = get_runners_distances(new_data, runners_list)
+    print("Runners distances are:", runners_distances)
+    #  print("There were this number of races: ", race_count)
     #  for dict_item in new_data:
         #  print(type(dict_item["Name"]))
         #  print(dict_item["Date"])
