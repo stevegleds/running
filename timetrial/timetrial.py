@@ -12,6 +12,7 @@ TIME_TRIAL_DISTANCE = 3.0 #TODO use this instead of distance
 
 # Working through https://automatetheboringstuff.com/chapter12/#calibre_link-64
 # 10 July 2015 branched to follow newcoder.io tutorial on data visualization
+# 11 November 2015 Added to desktop
 
 RUN_FILE = 'timetrial/timetrial.csv'
 
