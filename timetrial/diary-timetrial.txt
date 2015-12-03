@@ -1,3 +1,5 @@
+03 December 2015
+Cloned on desktop (I changed the project/solution folders)
 12 November 2015
 synced on desktop
 11 November 2015

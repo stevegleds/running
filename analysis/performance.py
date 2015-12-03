@@ -9,7 +9,7 @@ from collections import Counter
 # Working through https://automatetheboringstuff.com/chapter12/#calibre_link-64
 # 10 July 2015 branched to follow newcoder.io tutorial on data visualization
 
-RUN_FILE = 'pythonrunning.csv'
+RUN_FILE = 'analysis\pythonrunning.csv'
 
 
 def parse(raw_file, delimiter):
