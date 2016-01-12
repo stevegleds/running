@@ -1,4 +1,3 @@
-﻿__author__ = 'Steve'
 # testing
 # import matplotlib.pyplot as plt
 # import numpy as np
@@ -7,7 +6,9 @@ import tkinter as tk
 from collections import Counter
 import os as system
 
-TIME_TRIAL_DISTANCE = 3.0 #TODO use this instead of distance 
+#TODO Key error 'Race'
+
+TIME_TRIAL_DISTANCE = 3.0 
 
 
 # Working through https://automatetheboringstuff.com/chapter12/#calibre_link-64
@@ -40,10 +41,10 @@ def parse(raw_file, delimiter):
         parsed_data.append(dict(zip(fields, row)))  # Creates a new dict item for each row with col header as key
         #  racer_count += 1  # This is number of racers not races
     # count number of races
-    race_counter = Counter(item['Date'] for item in parsed_data)  # stores the number of races
-    print("number of races is: ", len(race_counter))
+    runners_in_race = Counter(item['Date'] for item in parsed_data)  # stores the number of races
+    print("number of races is: ", len(runners_in_race))
     print("the races are: ")
-    for k, v in race_counter.items():
+    for k, v in runners_in_race.items():
         print(k, "-->", v)
     # close csv file
     opened_file.close()
@@ -147,13 +148,10 @@ def get_runners_list(new_data):
 
 def get_distances(new_data):
     total_distance = 0
-    championship_distance = 0
     for race in new_data:
         if race['Miles'] != "" :
             # print("Runner", race['Name'], "ran", race['Miles'], "miles")
-            total_distance += float(race['Miles'])
-            if race['CC'] == 'S2015' : championship_distance += float(race['Miles'])
-
+            total_distance += float(TIME_TRIAL_DISTANCE)
     return total_distance, championship_distance
 
 def get_runners(new_data): # go through the data file to get a list of runners
@@ -171,9 +169,9 @@ def get_runners_distances(new_data, runners_list): #TODO this is not working
         runners_distances[runner] = 0 # set to 0 ready to add race distances
     print('runners distance dict is: ', runners_distances)
     for race in new_data:
-        print('name is: ', race['Runner'], 'distance is : ', race['Miles'])
+        print('name is: ', race['Runner'], 'distance is : ', TIME_TRIAL_DISTANCE)
         try:
-            runners_distances[race['Runner']] += float(race['Miles'])
+            runners_distances[race['Runner']] += float(TIME_TRIAL_DISTANCE)
             print(race['Runner'], ' has raced ', runners_distances[race['Runner']], ' at the end of the ', race['Race'], 'race') # TODO need to use formats here
             # Error Need to trap last race
         except:
