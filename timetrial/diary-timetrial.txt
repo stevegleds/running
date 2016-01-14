@@ -1,3 +1,10 @@
+14 January 2016
+Fixed Race.
+Also skipped blank rows using if row[1] == "" : pass
+Need to stop the program and add distances for each runner
+
+12 January 2016
+Fixed key error Miles NOw need to fix Race key error
 03 December 2015
 Cloned on desktop (I changed the project/solution folders)
 12 November 2015
