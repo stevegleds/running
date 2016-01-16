@@ -25,7 +25,6 @@ def parse(raw_file, delimiter):
     :return: parsed data
     Parses a raw CSV file to a JSON-line object.
     """
-
     # open csv file
     opened_file = open(raw_file)
     # read csv file
@@ -33,33 +32,31 @@ def parse(raw_file, delimiter):
     # csv_data object is now an iterator meaning we can get each element one at a time
 
     # build data structure to return parsed data
-    parsed_data = []  # this will store every row of data
-    
-    #  racer_count = 0
+    parsed_data = []  # this list will store every row of data
     fields = csv_data.__next__()  # this will be the column headers; we can use .next() because csv_data is an iterator
     for row in csv_data:
         if row[1] == "": # there is no text in the runner field so no data to process
             pass
         else:
-            parsed_data.append(dict(zip(fields, row)))  # Creates a new dict item for each row with col header as key
+            parsed_data.append(dict(zip(fields, row)))  # Creates a new dict item for each row with col header as key and stores in a list
         #  racer_count += 1  # This is number of racers not races
-
+    print("data list is: ", parsed_data)
+    print("Type of parsed_data is: ", type(parsed_data))
     # close csv file
     opened_file.close()
-
     return parsed_data
 
-def racers_summary(race_data):
+def races_summary(race_data):
     # count number of races, races per day, and races per runner
     runners_by_date = Counter(item['Date'] for item in race_data)  # each element contains date and number of runners for that date
     races_by_runner = Counter(item['Runner'] for item in race_data)  # each element contains runner and number of races for that runner
     print("number of races is: ", len(runners_by_date))
-    print("the races are: ")
-    for k, v in runners_by_date.items():
-        print(k, "-->", v)
-    print("The races by each runner: ")
-    for k, v in races_by_runner.items():
-        print(k, "-->", v)
+    #print("the races are: ")
+    #for k, v in runners_by_date.items():
+    #    print(k, "-->", v)
+    #print("The races by each runner: ")
+    #for k, v in races_by_runner.items():
+    #    print(k, "-->", v)
     return
 
 def visualize_races(data_file):
@@ -102,7 +99,6 @@ def visualize_races(data_file):
 
     #  close the plot file
     plt.clf()
-
 
 def visualize_type(new_data):
     """
@@ -163,25 +159,17 @@ def get_distances(new_data):
             total_distance += float(TIME_TRIAL_DISTANCE)
     return total_distance
 
-def get_runners(new_data): # go through the data file to get a list of runners
-    runner_counter = Counter(item['Runner'] for item in data_file)  # stores the number of races per runner
-    print("runner counter is: ", runner_counter)
-    runners_list = [runner for runner in sorted(runner_counter)]  # stores list of runners full names
-    runners_list.pop(0)  # first value is the null value
-    print("Runner list is :", runners_list)
-    return(runners_list)
-
-
-def get_runners_summary(new_data, runners_list): #TODO this is not working
-    runners_distances = {} # Dictionary to store cumulative distances
-    runners_max_pace = {}
+def get_runners_summary(new_data, runners_list): #TODO get max pace
+    runners_pace_dict = {}
     for runner in runners_list :
-        runners_distances[runner] = 0 # set to 0 ready to add race distances
-        runners_max_pace[runner] = 0 # set to 0 ready to add runners max pace
-    print('runners distance dict is: ', runners_distances) # debug only
-    for race in new_data:
-        # print('name is: ', race['Runner'], 'distance is : ', TIME_TRIAL_DISTANCE)
-        print("Runners pace is : ", race[runner], race[runners_pace])
+        runners_pace_dict[runner] = '' # set to '' ready to add runners pace
+    print('runners pace dict is: ', type(runners_pace_dict), runners_pace_dict) # debug only
+    for result in new_data:
+        print("result item is:", type(result), result)
+        print("Runners pace is : ", result['Runner'], result['Pace'])
+        runners_pace_dict[result['Runner']] = result['Pace']
+        print("runners pace: ", runners_pace_dict)
+
         try:
             runners_distances[race['Runner']] += float(TIME_TRIAL_DISTANCE)
             print(race['Runner'], ' has raced ', runners_distances[race['Runner']], ' at the end of the ', race['Race'], 'race') # TODO need to use formats here
@@ -189,7 +177,7 @@ def get_runners_summary(new_data, runners_list): #TODO this is not working
         except:
             pass # we have reached the end of the races . TODO trap this better we are also storing null values. Look at csv file.
         
-    return runners_distances
+    return runners_pace_dict
 
 def present_race_information(total_miles, championship_miles):
     # Tkinter testing
@@ -209,7 +197,7 @@ def present_race_information(total_miles, championship_miles):
 def main():
     # Call our parse function with required file an delimiter
     race_data = parse(RUN_FILE, ',')
-    racers_summary(race_data)
+    races_summary(race_data)
     print("The keys in the data are:", race_data[0].keys())
     runners_list = get_runners_list(race_data)
     print("Runners are: ", runners_list)
