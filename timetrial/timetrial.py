@@ -6,7 +6,7 @@ import tkinter as tk
 from collections import Counter
 import os as system
 
-#TODO Get total distance for runners / get program to stop!
+#TODO Get fastest time. runner_summary function shoud do this
 
 TIME_TRIAL_DISTANCE = 3.0 
 
@@ -28,7 +28,6 @@ def parse(raw_file, delimiter):
 
     # open csv file
     opened_file = open(raw_file)
-
     # read csv file
     csv_data = csv.reader(opened_file, delimiter=delimiter)  # first delimiter is csv.reader variable name
     # csv_data object is now an iterator meaning we can get each element one at a time
@@ -44,17 +43,24 @@ def parse(raw_file, delimiter):
         else:
             parsed_data.append(dict(zip(fields, row)))  # Creates a new dict item for each row with col header as key
         #  racer_count += 1  # This is number of racers not races
-    # count number of races
-    runners_in_race = Counter(item['Date'] for item in parsed_data)  # stores the number of races
-    print("number of races is: ", len(runners_in_race))
-    print("the races are: ")
-    for k, v in runners_in_race.items():
-        print(k, "-->", v)
+
     # close csv file
     opened_file.close()
 
     return parsed_data
 
+def racers_summary(race_data):
+    # count number of races, races per day, and races per runner
+    runners_by_date = Counter(item['Date'] for item in race_data)  # each element contains date and number of runners for that date
+    races_by_runner = Counter(item['Runner'] for item in race_data)  # each element contains runner and number of races for that runner
+    print("number of races is: ", len(runners_by_date))
+    print("the races are: ")
+    for k, v in runners_by_date.items():
+        print(k, "-->", v)
+    print("The races by each runner: ")
+    for k, v in races_by_runner.items():
+        print(k, "-->", v)
+    return
 
 def visualize_races(data_file):
     """
@@ -166,20 +172,23 @@ def get_runners(new_data): # go through the data file to get a list of runners
     return(runners_list)
 
 
-def get_runners_distances(new_data, runners_list): #TODO this is not working
+def get_runners_summary(new_data, runners_list): #TODO this is not working
     runners_distances = {} # Dictionary to store cumulative distances
+    runners_max_pace = {}
     for runner in runners_list :
         runners_distances[runner] = 0 # set to 0 ready to add race distances
-    print('runners distance dict is: ', runners_distances)
+        runners_max_pace[runner] = 0 # set to 0 ready to add runners max pace
+    print('runners distance dict is: ', runners_distances) # debug only
     for race in new_data:
-        print('name is: ', race['Runner'], 'distance is : ', TIME_TRIAL_DISTANCE)
+        # print('name is: ', race['Runner'], 'distance is : ', TIME_TRIAL_DISTANCE)
+        print("Runners pace is : ", race[runner], race[runners_pace])
         try:
             runners_distances[race['Runner']] += float(TIME_TRIAL_DISTANCE)
             print(race['Runner'], ' has raced ', runners_distances[race['Runner']], ' at the end of the ', race['Race'], 'race') # TODO need to use formats here
             # Error Need to trap last race
         except:
             pass # we have reached the end of the races . TODO trap this better we are also storing null values. Look at csv file.
-        print("Time Trial")
+        
     return runners_distances
 
 def present_race_information(total_miles, championship_miles):
@@ -199,13 +208,14 @@ def present_race_information(total_miles, championship_miles):
 
 def main():
     # Call our parse function with required file an delimiter
-    new_data = parse(RUN_FILE, ',')
-    print("The keys in the data are:", new_data[0].keys())
-    runners_list = get_runners_list(new_data)
+    race_data = parse(RUN_FILE, ',')
+    racers_summary(race_data)
+    print("The keys in the data are:", race_data[0].keys())
+    runners_list = get_runners_list(race_data)
     print("Runners are: ", runners_list)
-    runners_distances = get_runners_distances(new_data, runners_list)
+    runners_distances = get_runners_summary(race_data, runners_list)
     print("Runners distances are:", runners_distances)
-    total_distance = get_distances(new_data)
+    total_distance = get_distances(race_data)
     print('Total distance run : ', total_distance)
     # present_race_information(total_distance)
 

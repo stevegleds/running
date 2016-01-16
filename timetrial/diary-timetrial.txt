@@ -1,3 +1,9 @@
+16 January 2016
+Stopped program,
+Found distances
+Moved summary functions from parse data into own race_summary function
+created runner_summary function to get max, ave pace etc for each runner.
+
 14 January 2016
 Fixed Race.
 Also skipped blank rows using if row[1] == "" : pass
