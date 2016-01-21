@@ -1,3 +1,9 @@
+21 January 2016
+Previous methods not working. Now I'm trying to store data in a dictionary of list like Amanda: 0,0,0
+Problem is the dictionary is a dictionary of tuples. 
+Finally found problem with tuples: needed to initialise as list i.e. : [0,0,0] instead of 0,0,0
+should be able to carry on from here.
+
 16 January 2016
 Stopped program,
 Found distances

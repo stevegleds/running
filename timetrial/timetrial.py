@@ -7,6 +7,7 @@ from collections import Counter
 import os as system
 
 #TODO Get fastest time. runner_summary function shoud do this
+#TODO Finally found problem with tuples: needed to initialise as list i.e. : [0,0,0] instead of 0,0,0
 
 TIME_TRIAL_DISTANCE = 3.0 
 
@@ -15,7 +16,8 @@ TIME_TRIAL_DISTANCE = 3.0
 # 10 July 2015 branched to follow newcoder.io tutorial on data visualization
 # 11 November 2015 Added to desktop
 
-RUN_FILE = 'timetrial/timetrial.csv'
+# RUN_FILE = 'timetrial/timetrial.csv' # this is fullfile
+RUN_FILE = 'timetrial/timetrialtest.csv' # this is test file
 
 
 def parse(raw_file, delimiter):
@@ -144,13 +146,21 @@ def visualize_type(new_data):
 
     return
 
-def get_runners_list(new_data): 
+def get_runners_starting_list(new_data): 
     runner_counter = Counter(item['Runner'] for item in new_data)  # stores the number of races per runner
     print("runner counter is: ", runner_counter)
     runners_list = [runner for runner in sorted(runner_counter)]  # stores list of runners full names
-    runners_list.pop(0)  # first value is the null value
+    # create list of runners including name, number of races, distance and time
+    runners_summary ={}
+    # runners_summary['fields'] = 'races', 'total_distance', 'total_time'
+    for runner in runners_list:
+        runners_summary[runner] = [0, 0, 0]
+    print("Runners summary at start is: ", runners_summary)
+
+
     print("Runner list is :", runners_list)
-    return runners_list
+    print("************")
+    return runners_list, runners_summary
 
 def get_distances(new_data):
     total_distance = 0
@@ -159,25 +169,33 @@ def get_distances(new_data):
             total_distance += float(TIME_TRIAL_DISTANCE)
     return total_distance
 
-def get_runners_summary(new_data, runners_list): #TODO get max pace
+def get_runners_summary(new_data, runners_summary): #TODO get max pace
+    print("*** get_runners_summary starts ***")
     runners_pace_dict = {}
-    for runner in runners_list :
-        runners_pace_dict[runner] = '' # set to '' ready to add runners pace
-    print('runners pace dict is: ', type(runners_pace_dict), runners_pace_dict) # debug only
+    #for runner in runners_list :
+    #    runners_pace_dict[runner] = '' # set to '' ready to add runners pace
+    #print('*** runners pace dict is: ', type(runners_pace_dict), runners_pace_dict) # debug only
     for result in new_data:
-        print("result item is:", type(result), result)
-        print("Runners pace is : ", result['Runner'], result['Pace'])
-        runners_pace_dict[result['Runner']] = result['Pace']
-        print("runners pace: ", runners_pace_dict)
+        # print("result item is:", type(result), result)
+        #print(result['Runner'], "'s pace was : ", result['Pace'])
+        #runners_pace_dict[result['Runner']] = result['Pace']
+        #print("All runners paces are: ", runners_pace_dict)
 
-        try:
-            runners_distances[race['Runner']] += float(TIME_TRIAL_DISTANCE)
-            print(race['Runner'], ' has raced ', runners_distances[race['Runner']], ' at the end of the ', race['Race'], 'race') # TODO need to use formats here
-            # Error Need to trap last race
-        except:
-            pass # we have reached the end of the races . TODO trap this better we are also storing null values. Look at csv file.
+        #try:
+        #    runners_distances[race['Runner']] += float(TIME_TRIAL_DISTANCE)
+        #    print(race['Runner'], ' has raced ', runners_distances[race['Runner']], ' at the end of the ', race['Race'], 'race') # TODO need to use formats here
+        #    # Error Need to trap last race
+        #except:
+        #    print("Error: get_runners_summary exception reached")
+        #    pass # we have reached the end of the races . TODO trap this better we are also storing null values. Look at csv file.
         
-    return runners_pace_dict
+        print(result)
+        print("runner field 3 type is is: ", type(runners_summary[result['Runner']][0]))
+        print("runners_summary element type is: ", type(runners_summary[result['Runner']]))
+        runners_summary[result['Runner']][0] = 3
+    print("*** Runners Summary is now : ", runners_summary)
+    print("*** get_runners_summary ends ***")    
+    return runners_summary
 
 def present_race_information(total_miles, championship_miles):
     # Tkinter testing
@@ -199,9 +217,9 @@ def main():
     race_data = parse(RUN_FILE, ',')
     races_summary(race_data)
     print("The keys in the data are:", race_data[0].keys())
-    runners_list = get_runners_list(race_data)
+    runners_list, runners_summary = get_runners_starting_list(race_data)
     print("Runners are: ", runners_list)
-    runners_distances = get_runners_summary(race_data, runners_list)
+    runners_distances = get_runners_summary(race_data, runners_summary)
     print("Runners distances are:", runners_distances)
     total_distance = get_distances(race_data)
     print('Total distance run : ', total_distance)
