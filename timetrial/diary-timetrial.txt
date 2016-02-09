@@ -1,3 +1,7 @@
+09 February 2016
+Cloned to laptop (old folder renamed to 160209)
+
+
 21 January 2016
 Previous methods not working. Now I'm trying to store data in a dictionary of list like Amanda: 0,0,0
 Problem is the dictionary is a dictionary of tuples. 
