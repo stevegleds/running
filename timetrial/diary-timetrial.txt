@@ -1,6 +1,7 @@
 09 February 2016
 Cloned to laptop (old folder renamed to 160209)
-
+Took all plotting code out of main py file to separate visualize file
+Amended summary function to add individual distances
 
 21 January 2016
 Previous methods not working. Now I'm trying to store data in a dictionary of list like Amanda: 0,0,0
