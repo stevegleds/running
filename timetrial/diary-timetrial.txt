@@ -1,3 +1,6 @@
+11 February 2016
+Added runningclasses.py to work on classes
+
 10 February 2016
 Cloned to Desktop
 
