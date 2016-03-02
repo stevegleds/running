@@ -4,11 +4,11 @@ import csv
 import os as system
 from collections import Counter
 
-#TODO Get fastest time. runner_summary function shoud do this
+#TODO Get fastest time. runner_summary function should do this.as
+#TODO Need to find a way to update pb date and time(s) in Worked on def get_runners_summary(new_data, runners_summary)
 #TODO Finally found problem with tuples: needed to initialise as list i.e. : [0,0,0] instead of 0,0,0
 
 TIME_TRIAL_DISTANCE = 3.0 
-
 
 # Working through https://automatetheboringstuff.com/chapter12/#calibre_link-64
 # 10 July 2015 branched to follow newcoder.io tutorial on data visualization
@@ -60,7 +60,8 @@ def races_summary(race_data):
     return
 
 
-def get_runners_starting_list(new_data): 
+def get_runners_starting_list(new_data):
+    # initializes runner_summary to 0 to store summary info
     runner_counter = Counter(item['Runner'] for item in new_data)  # stores the number of races per runner
     print("runner counter is: ", runner_counter)
     runners_list = [runner for runner in sorted(runner_counter)]  # stores list of runners full names
@@ -68,10 +69,8 @@ def get_runners_starting_list(new_data):
     runners_summary ={}
     # runners_summary['fields'] = 'races', 'total_distance', 'total_time'
     for runner in runners_list:
-        runners_summary[runner] = [0, 0, 0]
+        runners_summary[runner] = [0, 0, 'date', 'pb time', 99]  # total distance, total time, pb date, pb time, pb pace
     print("Runners summary at start is: ", runners_summary)
-
-
     print("Runner list is :", runners_list)
     print("************")
     return runners_list, runners_summary
@@ -85,28 +84,16 @@ def get_distances(new_data):
 
 def get_runners_summary(new_data, runners_summary): #TODO get max pace
     print("*** get_runners_summary starts ***")
-    runners_pace_dict = {}
-    #for runner in runners_list :
-    #    runners_pace_dict[runner] = '' # set to '' ready to add runners pace
-    #print('*** runners pace dict is: ', type(runners_pace_dict), runners_pace_dict) # debug only
     for result in new_data:
-        # print("result item is:", type(result), result)
-        #print(result['Runner'], "'s pace was : ", result['Pace'])
-        #runners_pace_dict[result['Runner']] = result['Pace']
-        #print("All runners paces are: ", runners_pace_dict)
-
-        #try:
-        #    runners_distances[race['Runner']] += float(TIME_TRIAL_DISTANCE)
-        #    print(race['Runner'], ' has raced ', runners_distances[race['Runner']], ' at the end of the ', race['Race'], 'race') # TODO need to use formats here
-        #    # Error Need to trap last race
-        #except:
-        #    print("Error: get_runners_summary exception reached")
-        #    pass # we have reached the end of the races . TODO trap this better we are also storing null values. Look at csv file.
-        
         print(result)
         print("runner field 3 type is is: ", type(runners_summary[result['Runner']][0]))
         print("runners_summary element type is: ", type(runners_summary[result['Runner']]))
         runners_summary[result['Runner']][0] += 3
+        runners_summary[result['Runner']][1] = result['Digitime']
+        runners_summary[result['Runner']][2] = result['Date']
+        runners_summary[result['Runner']][3] = result['Time']
+        runners_summary[result['Runner']][4] = result['Pace']
+       # runners_summary[result['Runner']][4] = min(runners_summary[result['Runner']][4], result['Pace'])
     print("*** Runners Summary is now : ", runners_summary)
     print("*** get_runners_summary ends ***")    
     return runners_summary
