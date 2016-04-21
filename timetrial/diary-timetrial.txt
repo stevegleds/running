@@ -1,3 +1,8 @@
+21 April 2016
+get_runners_summary add test for pb and update runners_summary accordingly
+need to work on presentation
+next step : work on define show_pbs(runners_distances) to present pbs
+
 02 March 2016
 Worked on def get_runners_summary(new_data, runners_summary) to add data to runner summary
 Need to find a way to update pb date and time(s)
